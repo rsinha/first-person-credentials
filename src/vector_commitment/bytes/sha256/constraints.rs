@@ -2,8 +2,8 @@ use ark_crypto_primitives::crh::{
         constraints::{CRHSchemeGadget, TwoToOneCRHSchemeGadget},
         sha256::constraints::Sha256Gadget,
 };
+use ark_ff::PrimeField;
 use crate::merkle_tree::constraints::{PathVar, BytesVarDigestConverter, ConfigGadget};
-use ark_ed_on_bw6_761::Fq;
 #[allow(unused)]
 use ark_r1cs_std::prelude::*;
 #[allow(unused)]
@@ -16,33 +16,33 @@ use ark_r1cs_std::{bits::uint8::UInt8, alloc::AllocVar};
 use super::*;
 use super::common::*;
 
-type LeafHG = Sha256Gadget<ConstraintF>;
-type CompressHG = Sha256Gadget<ConstraintF>;
+type LeafHG<ConstraintF> = Sha256Gadget<ConstraintF>;
+type CompressHG<ConstraintF> = Sha256Gadget<ConstraintF>;
 
 type LeafVar<ConstraintF> = [UInt8<ConstraintF>];
 
-type ConstraintF = Fq;
-
 #[derive(Debug)]
-pub struct Sha256MerkleTreeParamsVar;
+pub struct Sha256MerkleTreeParamsVar<ConstraintF> {
+    _field: core::marker::PhantomData<ConstraintF>,
+}
 
-impl ConfigGadget<Sha256MerkleTreeParams, ConstraintF> for Sha256MerkleTreeParamsVar {
+impl<ConstraintF: PrimeField> ConfigGadget<Sha256MerkleTreeParams, ConstraintF> for Sha256MerkleTreeParamsVar<ConstraintF> {
     type Leaf = LeafVar<ConstraintF>;
-    type LeafDigest = <LeafHG as CRHSchemeGadget<LeafH, ConstraintF>>::OutputVar;
+    type LeafDigest = <LeafHG<ConstraintF> as CRHSchemeGadget<LeafH, ConstraintF>>::OutputVar;
     type LeafInnerConverter = BytesVarDigestConverter<Self::LeafDigest, ConstraintF>;
-    type InnerDigest = <CompressHG as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::OutputVar;
-    type LeafHash = LeafHG;
-    type TwoToOneHash = CompressHG;
+    type InnerDigest = <CompressHG<ConstraintF> as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::OutputVar;
+    type LeafHash = LeafHG<ConstraintF>;
+    type TwoToOneHash = CompressHG<ConstraintF>;
 }
 
-pub struct JZVectorCommitmentParamsVar {
+pub struct JZVectorCommitmentParamsVar<ConstraintF: PrimeField> {
     pub leaf_crh_params_var: 
-        <LeafHG as CRHSchemeGadget<LeafH, ConstraintF>>::ParametersVar,
+        <LeafHG<ConstraintF> as CRHSchemeGadget<LeafH, ConstraintF>>::ParametersVar,
     pub two_to_one_crh_params_var: 
-        <CompressHG as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::ParametersVar,
+        <CompressHG<ConstraintF> as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::ParametersVar,
 }
 
-impl AllocVar<JZVectorCommitmentParams, ConstraintF> for JZVectorCommitmentParamsVar {
+impl<ConstraintF: PrimeField> AllocVar<JZVectorCommitmentParams, ConstraintF> for JZVectorCommitmentParamsVar<ConstraintF> {
     fn new_variable<T: Borrow<JZVectorCommitmentParams>>(
         cs: impl Into<Namespace<ConstraintF>>,
         f: impl FnOnce() -> Result<T>,
@@ -53,7 +53,7 @@ impl AllocVar<JZVectorCommitmentParams, ConstraintF> for JZVectorCommitmentParam
             
             //let crh_params = ();
             let leaf_crh_params_var =
-                <LeafHG as CRHSchemeGadget<LeafH, ConstraintF>>::ParametersVar::
+                <LeafHG<ConstraintF> as CRHSchemeGadget<LeafH, ConstraintF>>::ParametersVar::
                 new_variable(
                     cs.clone(),
                     || Ok(&val.borrow().leaf_crh_params),
@@ -61,7 +61,7 @@ impl AllocVar<JZVectorCommitmentParams, ConstraintF> for JZVectorCommitmentParam
                 )?;
 
             let two_to_one_crh_params_var =
-                <CompressHG as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::
+                <CompressHG<ConstraintF> as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::
                 ParametersVar::new_variable(
                     cs.clone(),
                     || Ok(&val.borrow().two_to_one_params),
@@ -78,14 +78,14 @@ impl AllocVar<JZVectorCommitmentParams, ConstraintF> for JZVectorCommitmentParam
     }
 }
 
-pub struct JZVectorCommitmentOpeningProofVar {
-    pub path_var: PathVar<Sha256MerkleTreeParams, ConstraintF, Sha256MerkleTreeParamsVar>,
+pub struct JZVectorCommitmentOpeningProofVar<ConstraintF: PrimeField> {
+    pub path_var: PathVar<Sha256MerkleTreeParams, ConstraintF, Sha256MerkleTreeParamsVar<ConstraintF>>,
     pub leaf_var: Vec<UInt8<ConstraintF>>,
-    pub root_var: <CompressHG as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::OutputVar,
+    pub root_var: <CompressHG<ConstraintF> as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::OutputVar,
 }
 
-impl<L: CanonicalSerialize + Clone> 
-    AllocVar<JZVectorCommitmentOpeningProof<L>, ConstraintF> for JZVectorCommitmentOpeningProofVar {
+impl<L: CanonicalSerialize + Clone, ConstraintF: PrimeField> 
+    AllocVar<JZVectorCommitmentOpeningProof<L>, ConstraintF> for JZVectorCommitmentOpeningProofVar<ConstraintF> {
     fn new_variable<T: Borrow<JZVectorCommitmentOpeningProof<L>>>(
         cs: impl Into<Namespace<ConstraintF>>,
         f: impl FnOnce() -> Result<T>,
@@ -96,7 +96,8 @@ impl<L: CanonicalSerialize + Clone>
             
             let opening_proof: &JZVectorCommitmentOpeningProof<L> = val.borrow();
 
-            let root_var = <CompressHG as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::OutputVar::new_variable(
+            let root_var = <CompressHG<ConstraintF> as TwoToOneCRHSchemeGadget<CompressH, ConstraintF>>::
+            OutputVar::new_variable(
                 cs.clone(), 
                 || Ok(opening_proof.root.clone()),
                 mode
@@ -117,7 +118,7 @@ impl<L: CanonicalSerialize + Clone>
                 )?);
             }
 
-            let path_var: PathVar<Sha256MerkleTreeParams, ConstraintF, Sha256MerkleTreeParamsVar> = PathVar::new_variable(
+            let path_var: PathVar<Sha256MerkleTreeParams, ConstraintF, Sha256MerkleTreeParamsVar<ConstraintF>> = PathVar::new_variable(
                 cs.clone(),
                 || Ok(&opening_proof.path),
                 mode
@@ -135,10 +136,10 @@ impl<L: CanonicalSerialize + Clone>
 }
 
 
-pub fn generate_constraints(
+pub fn generate_constraints<ConstraintF: PrimeField>(
     _cs: ConstraintSystemRef<ConstraintF>,
-    params: &JZVectorCommitmentParamsVar,
-    proof: &JZVectorCommitmentOpeningProofVar,
+    params: &JZVectorCommitmentParamsVar<ConstraintF>,
+    proof: &JZVectorCommitmentOpeningProofVar<ConstraintF>,
 ) {
 
     let path_validity = proof.path_var.verify_membership(
@@ -160,6 +161,7 @@ mod tests {
     use ark_ec::{AffineRepr, CurveGroup};
     use ark_ff::BigInteger256;
     use ark_bls12_377::*;
+    use ark_bw6_761::Fr as ConstraintF;
 
     #[test]
     fn test_vector_storage_bigint_constraint_gen() {
