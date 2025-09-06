@@ -39,10 +39,10 @@ AllocVar<JZRecord<N, M, RecordF>, ConstraintF> for JZRecordVar<N, ConstraintF> {
                 byte_vars.push(field_byte_vars);
             }
 
-            let sha256_com: Vec<u8> = val.borrow().commitment();
+            let sha256_com: [u8; 32] = val.borrow().commitment();
             let sha256_digest = DigestVar::new_variable(
                 cs.clone(),
-                || Ok(sha256_com),
+                || Ok(sha256_com.to_vec()),
                 mode
             )?;
 

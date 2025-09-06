@@ -7,13 +7,14 @@ use ark_std::marker::PhantomData;
 
 use crate::utils;
 
-fn hash_of_fields(fields: &[Vec<u8>]) -> Vec<u8> {
+fn hash_of_fields(fields: &[Vec<u8>]) -> [u8; 32] {
     let mut concatenated = Vec::new();
     for field in fields.iter() {
         concatenated.extend_from_slice(field);
     }
 
-    Sha256::evaluate(&(), concatenated).unwrap()
+    let h = Sha256::evaluate(&(), concatenated).unwrap();
+    h.try_into().expect("expected sha256 output to be 32 bytes")
 }
 
 #[derive(Clone)]
@@ -30,7 +31,7 @@ impl<const N: usize, const M: usize, RecordF: PrimeField + std::convert::From<Bi
         }
     }
 
-    pub fn commitment(&self) -> Vec<u8> {
+    pub fn commitment(&self) -> [u8; 32] {
         hash_of_fields(&self.fields)
     }
 
