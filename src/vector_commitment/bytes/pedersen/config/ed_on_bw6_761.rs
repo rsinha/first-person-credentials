@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 use ark_crypto_primitives::crh::{pedersen, *};
 use ark_r1cs_std::bits::uint8::UInt8;
 

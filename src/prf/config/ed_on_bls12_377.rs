@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 use ark_crypto_primitives::crh::pedersen;
 
 #[derive(Clone)]
@@ -16,5 +18,3 @@ pub type HashGadget = pedersen::constraints::CRHGadget<
     ark_ed_on_bls12_377::constraints::EdwardsVar,
     Window4x256
 >;
-
-//pub type HOutput = <ark_ed_on_bls12_377::EdwardsConfig as CurveConfig>::BaseField;

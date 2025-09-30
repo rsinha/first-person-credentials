@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Portions of this file are derived from arkworks-rs/crypto-primitives under Apache 2.0 License.
+
 use crate::merkle_tree::{Path, Config, IdentityDigestConverter};
 use ark_crypto_primitives::crh::{CRHSchemeGadget, TwoToOneCRHSchemeGadget};
 use ark_ff::Field;

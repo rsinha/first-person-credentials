@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Portions of this file are derived from arkworks-rs/r1cs-tutorial under Apache 2.0 License.
+
 use ark_ff::Field;
 use core::fmt::Debug;
 

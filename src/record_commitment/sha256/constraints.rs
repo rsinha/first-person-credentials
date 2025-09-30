@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 use ark_crypto_primitives::crh::CRHSchemeGadget;
 use ark_ff::*;
 use ark_relations::r1cs::*;

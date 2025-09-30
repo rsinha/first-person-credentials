@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Portions of this file are derived from arkworks-rs/r1cs-tutorial under Apache 2.0 License.
+
 use crate::random_oracle::{blake2s, RandomOracleGadget};
 use ark_crypto_primitives::prf::blake2s::constraints::{evaluate_blake2s, OutputVar};
 use ark_ff::{Field, PrimeField};

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 pub mod common;
 pub mod constraints;
 
@@ -69,8 +71,8 @@ impl<L: CanonicalSerialize + Clone> JZVectorDB<L> {
             .collect();
 
         let tree = Sha256MerkleTree::new(
-            &sha256_params, //&params.leaf_crh_params.clone(),
-            &sha256_params, //&params.two_to_one_params.clone(),
+            &sha256_params,
+            &sha256_params,
             leaves.iter().map(|x| x.as_slice()),
         )
         .unwrap();

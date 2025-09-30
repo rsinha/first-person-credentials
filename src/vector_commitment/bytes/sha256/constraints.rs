@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 use ark_crypto_primitives::crh::{
         constraints::{CRHSchemeGadget, TwoToOneCRHSchemeGadget},
         sha256::constraints::Sha256Gadget,

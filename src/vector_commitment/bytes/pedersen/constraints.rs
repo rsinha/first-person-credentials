@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 use ark_crypto_primitives::{
     to_uncompressed_bytes,
     crh::{CRHSchemeGadget, TwoToOneCRHSchemeGadget},

@@ -1,10 +1,11 @@
+// SPDX-License-Identifier: Apache-2.0
+
 #![allow(dead_code)]
 #![deny(
     unused,
     future_incompatible,
     nonstandard_style,
     rust_2018_idioms,
-    // missing_docs
 )]
 #![forbid(unsafe_code)]
 

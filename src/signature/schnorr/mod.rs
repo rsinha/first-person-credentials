@@ -1,16 +1,13 @@
+// SPDX-License-Identifier: Apache-2.0
+// Portions of this file are derived from arkworks-rs/r1cs-tutorial under Apache 2.0 License.
+
 use super::SignatureScheme;
 use ark_crypto_primitives::Error;
 use ark_ec::CurveGroup;
-// use ark_ff::{
-//     fields::{Field, PrimeField},
-//     ToConstraintField, UniformRand,
-// };
 use ark_ff::fields::PrimeField;
 use ark_ff::UniformRand;
 use ark_serialize::{CanonicalDeserialize, CanonicalSerialize};
-use ark_std::rand::Rng;
-use ark_std::{hash::Hash, marker::PhantomData, vec::Vec};
-use ark_std::ops::*;
+use ark_std::{ops::*, hash::Hash, marker::PhantomData, vec::Vec, rand::Rng};
 use blake2::Blake2s;
 use digest::Digest;
 
@@ -166,12 +163,3 @@ pub fn bytes_to_bits(bytes: &[u8]) -> Vec<bool> {
     }
     bits
 }
-
-// impl<ConstraintF: Field, C: CurveGroup + ToConstraintField<ConstraintF>>
-//     ToConstraintField<ConstraintF> for Parameters<C>
-// {
-//     #[inline]
-//     fn to_field_elements(&self) -> Option<Vec<ConstraintF>> {
-//         self.generator.into_projective().to_field_elements()
-//     }
-// }

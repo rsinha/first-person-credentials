@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 pub mod constraints;
 pub mod config;
 
@@ -76,9 +78,6 @@ mod tests {
     fn test_jzprf() {
         let seed = [0u8; 32];
         let mut rng = rand_chacha::ChaCha8Rng::from_seed(seed);
-
-        // TODO: for now we sample the public parameters directly;
-        // we should change this to load from a file produced by a trusted setup
         let prf_params = JZPRFParams::<H>::trusted_setup(&mut rng);
         
         let input = [0u8; 32];

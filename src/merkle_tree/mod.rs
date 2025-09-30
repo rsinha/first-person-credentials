@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Portions of this file are derived from arkworks-rs/crypto-primitives under Apache 2.0 License.
+
 #![allow(clippy::needless_range_loop)]
 
 /// Defines a trait to chain two types of CRHs.

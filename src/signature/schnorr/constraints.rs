@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Portions of this file are derived from arkworks-rs/r1cs-tutorial under Apache 2.0 License.
+
 use ark_ec::CurveGroup;
 use ark_ff::Field;
 use ark_r1cs_std::{bits::uint8::UInt8, prelude::*};

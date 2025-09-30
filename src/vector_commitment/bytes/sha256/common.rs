@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 use ark_crypto_primitives::{
     crh::{sha256::Sha256, CRHScheme, TwoToOneCRHScheme},
     Error,
@@ -23,7 +25,7 @@ impl Config for Sha256MerkleTreeParams {
     type Leaf = [u8];
 
     type LeafDigest = <LeafH as CRHScheme>::Output;
-    type LeafInnerDigestConverter = CustomDigestConverter; //ByteDigestConverter<Self::LeafDigest>;
+    type LeafInnerDigestConverter = CustomDigestConverter;
     type InnerDigest = <CompressH as TwoToOneCRHScheme>::Output;
 
     type LeafHash = LeafH;
