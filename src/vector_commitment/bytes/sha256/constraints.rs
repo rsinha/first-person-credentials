@@ -13,7 +13,7 @@ use ark_relations::r1cs::{ConstraintSystem, ConstraintSystemRef};
 use ark_serialize::CanonicalSerialize;
 use ark_std::borrow::*;
 use ark_relations::r1cs::*;
-use ark_r1cs_std::{bits::uint8::UInt8, alloc::AllocVar};
+use ark_r1cs_std::{uint8::UInt8, alloc::AllocVar};
 
 use super::*;
 use super::common::*;

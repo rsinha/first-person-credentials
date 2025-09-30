@@ -10,13 +10,13 @@ use ark_groth16::{Groth16, ProvingKey, VerifyingKey};
 use ark_snark::SNARK;
 use ark_ec::*;
 
-use lib_sanctum::{record_commitment, vector_commitment, prf};
-use lib_sanctum::record_commitment::pedersen::{*, constraints::*};
-use lib_sanctum::vector_commitment::bytes::sha256::{*, constraints::*};
-use lib_sanctum::prf::{*, constraints::*};
-use lib_sanctum::signature::{schnorr, schnorr::constraints::*, *};
-use lib_sanctum::random_oracle::{RandomOracle, blake2s::RO};
-use lib_sanctum::utils;
+use zkbk::{record_commitment, vector_commitment, prf};
+use zkbk::record_commitment::pedersen::{*, constraints::*};
+use zkbk::vector_commitment::bytes::sha256::{*, constraints::*};
+use zkbk::prf::{*, constraints::*};
+use zkbk::signature::{schnorr, schnorr::constraints::*, *};
+use zkbk::random_oracle::{RandomOracle, blake2s::RO};
+use zkbk::utils;
 
 use ark_ed_on_bw6_761::constraints::EdwardsVar as JubJubVar;
 use ark_ed_on_bw6_761::EdwardsProjective as JubJub;
@@ -229,7 +229,7 @@ impl ConstraintSynthesizer<ConstraintF> for IssuerCircuit {
         proof_var.leaf_var[0].enforce_equal(&UInt8::constant(Country::USA as u8))?;
 
         // message signed by the user
-        let statement_digest_var_bytes = statement_digest_var.to_bytes().unwrap();
+        let statement_digest_var_bytes = statement_digest_var.to_bytes_le().unwrap();
         for i in 0..user_signature_msg_var.len() {
             statement_digest_var_bytes[i].enforce_equal(&user_signature_msg_var[i])?;
         }
@@ -240,7 +240,7 @@ impl ConstraintSynthesizer<ConstraintF> for IssuerCircuit {
             .to_affine()
             .unwrap()
             .x
-            .to_bytes()
+            .to_bytes_le()
             .unwrap();
         for i in 0..user_record_com_affine_x_bytes.len() {
             user_record_com_affine_x_bytes[i].enforce_equal(&issuer_signature_msg_var[i])?;
@@ -254,7 +254,7 @@ impl ConstraintSynthesizer<ConstraintF> for IssuerCircuit {
         }
 
         // check if it matches the pubkey from schnorr
-        let user_pk_var_serialization = user_pk_var.pub_key.x.to_bytes().unwrap();
+        let user_pk_var_serialization = user_pk_var.pub_key.x.to_bytes_le().unwrap();
         for i in 0..pubkey_byte_vars.len() {
             pubkey_byte_vars[i].enforce_equal(&user_pk_var_serialization[i])?;
         }
@@ -273,7 +273,7 @@ impl ConstraintSynthesizer<ConstraintF> for IssuerCircuit {
             byte_var.enforce_equal(&nullifier_prf_instance_var.output_var[i])?;
         }
         // merkle root is at index 2 of the user record
-        let root_byte_vars = proof_var.root_var.to_bytes().unwrap();
+        let root_byte_vars = proof_var.root_var.to_bytes_le().unwrap();
         for (i, byte_var) in user_record_var.fields[2].iter().enumerate() {
             byte_var.enforce_equal(&root_byte_vars[i])?;
         }

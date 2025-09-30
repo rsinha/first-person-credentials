@@ -9,8 +9,8 @@ use ark_relations::r1cs::*;
 use ark_groth16::{Groth16, ProvingKey, VerifyingKey};
 use ark_snark::SNARK;
 
-use lib_sanctum::record_commitment::kzg::{*, constraints::*};
-use lib_sanctum::record_commitment;
+use zkbk::record_commitment::kzg::{*, constraints::*};
+use zkbk::record_commitment;
 
 pub type ConstraintF = ark_bw6_761::Fr;
 

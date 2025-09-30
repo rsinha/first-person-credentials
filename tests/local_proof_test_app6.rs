@@ -9,10 +9,10 @@ use ark_relations::r1cs::*;
 use ark_groth16::{Groth16, ProvingKey, VerifyingKey};
 use ark_snark::SNARK;
 
-use lib_sanctum::{vector_commitment, record_commitment, prf};
-use lib_sanctum::vector_commitment::bytes::pedersen::{*, constraints::*};
-use lib_sanctum::record_commitment::pedersen::{*, constraints::*};
-use lib_sanctum::prf::{*, constraints::*};
+use zkbk::{vector_commitment, record_commitment, prf};
+use zkbk::vector_commitment::bytes::pedersen::{*, constraints::*};
+use zkbk::record_commitment::pedersen::{*, constraints::*};
+use zkbk::prf::{*, constraints::*};
 
 pub const OWNER: usize = 1;
 
@@ -136,7 +136,7 @@ impl ConstraintSynthesizer<ConstraintF> for SpendCircuit {
         // just compare the x-coordinate...that's what compressed mode stores anyways
         // see ark_ec::models::short_weierstrass::GroupAffine::to_bytes
         let mut com_byte_vars: Vec::<UInt8<ConstraintF>> = Vec::new();
-        com_byte_vars.extend_from_slice(&coin_com_affine.x.to_bytes()?);
+        com_byte_vars.extend_from_slice(&coin_com_affine.x.to_bytes_le()?);
 
         for (i, byte_var) in com_byte_vars.iter().enumerate() {
             // the serialization impl for CanonicalSerialize does x first

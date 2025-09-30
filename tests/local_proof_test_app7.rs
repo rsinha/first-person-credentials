@@ -9,11 +9,11 @@ use ark_relations::r1cs::*;
 use ark_groth16::{Groth16, ProvingKey, VerifyingKey};
 use ark_snark::SNARK;
 
-use lib_sanctum::utils;
-use lib_sanctum::{vector_commitment, record_commitment, prf};
-use lib_sanctum::vector_commitment::bytes::pedersen::{*, constraints::*};
-use lib_sanctum::record_commitment::kzg::{*, constraints::*};
-use lib_sanctum::prf::{*, constraints::*};
+use zkbk::utils;
+use zkbk::{vector_commitment, record_commitment, prf};
+use zkbk::vector_commitment::bytes::pedersen::{*, constraints::*};
+use zkbk::record_commitment::kzg::{*, constraints::*};
+use zkbk::prf::{*, constraints::*};
 
 pub const OWNER: usize = 1;
 pub const RHO: usize = 7;
@@ -167,7 +167,7 @@ impl ConstraintSynthesizer<ConstraintF> for SpendCircuit {
         // just compare the x-coordinate...that's what compressed mode stores anyways
         // see ark_ec::models::short_weierstrass::GroupAffine::to_bytes
         let mut com_byte_vars: Vec::<UInt8<ConstraintF>> = Vec::new();
-        com_byte_vars.extend_from_slice(&coin_com_affine.x.to_bytes()?);
+        com_byte_vars.extend_from_slice(&coin_com_affine.x.to_bytes_le()?);
 
         for (i, byte_var) in com_byte_vars.iter().enumerate() {
             // the serialization impl for CanonicalSerialize does x first
@@ -181,7 +181,7 @@ impl ConstraintSynthesizer<ConstraintF> for SpendCircuit {
 
         // prove PRF output of nullifier
         let mut prf_byte_vars: Vec::<UInt8<ConstraintF>> = Vec::new();
-        prf_byte_vars.extend_from_slice(&nullifier_x_var.to_bytes()?);
+        prf_byte_vars.extend_from_slice(&nullifier_x_var.to_bytes_le()?);
 
         for i in 0..std::cmp::min(nullifier_prf_instance_var.output_var.len(), prf_byte_vars.len()) {
             nullifier_prf_instance_var.output_var[i].enforce_equal(&prf_byte_vars[i])?;

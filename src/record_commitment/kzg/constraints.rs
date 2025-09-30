@@ -4,7 +4,7 @@ use ark_ff::*;
 use ark_std::{borrow::*, *};
 use std::ops::AddAssign;
 use ark_relations::r1cs::*;
-use ark_r1cs_std::{bits::uint8::UInt8, prelude::*, alloc::AllocVar};
+use ark_r1cs_std::{uint8::UInt8, prelude::*, alloc::AllocVar};
 use ark_r1cs_std::groups::curves::short_weierstrass::bls12::*;
 use ark_ec::{models::bls12::*, bls12::Bls12Config, CurveConfig};
 
@@ -22,7 +22,7 @@ pub struct JZRecordVar<const N: usize, C, ConstraintF>
     pub commitment: G1Var<C>,
 }
 
-impl<const N: usize, const M: usize, C: Bls12Config, ConstraintF: Field>
+impl<const N: usize, const M: usize, C: Bls12Config, ConstraintF: PrimeField>
     AllocVar<JZKZGCommitmentParams<N, M, C>, ConstraintF> for JZKZGCommitmentParamsVar<N, C>
     where   C: Bls12Config<Fp = ConstraintF>,
             <<C as Bls12Config>::G1Config as CurveConfig>::ScalarField: std::convert::From<BigInt<M>>,

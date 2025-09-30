@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 // Portions of this file are derived from arkworks-rs/r1cs-tutorial under Apache 2.0 License.
 
-use ark_ff::Field;
+use ark_ff::PrimeField;
 use ark_r1cs_std::prelude::*;
 use ark_relations::r1cs::SynthesisError;
 
 use crate::signature::SignatureScheme;
 
-pub trait SigVerifyGadget<S: SignatureScheme, ConstraintF: Field> {
+pub trait SigVerifyGadget<S: SignatureScheme, ConstraintF: PrimeField> {
     type ParametersVar: AllocVar<S::Parameters, ConstraintF> + Clone;
 
     type PublicKeyVar: ToBytesGadget<ConstraintF> + AllocVar<S::PublicKey, ConstraintF> + Clone;
@@ -22,7 +22,7 @@ pub trait SigVerifyGadget<S: SignatureScheme, ConstraintF: Field> {
     ) -> Result<Boolean<ConstraintF>, SynthesisError>;
 }
 
-pub trait SigRandomizePkGadget<S: SignatureScheme, ConstraintF: Field> {
+pub trait SigRandomizePkGadget<S: SignatureScheme, ConstraintF: PrimeField> {
     type ParametersVar: AllocVar<S::Parameters, ConstraintF> + Clone;
 
     type PublicKeyVar: ToBytesGadget<ConstraintF>

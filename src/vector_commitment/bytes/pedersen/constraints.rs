@@ -13,11 +13,12 @@ use ark_relations::r1cs::{ConstraintSystem, ConstraintSystemRef};
 use ark_serialize::CanonicalSerialize;
 use ark_std::borrow::*;
 use ark_relations::r1cs::*;
-use ark_r1cs_std::{bits::uint8::UInt8, alloc::AllocVar};
+use ark_r1cs_std::{uint8::UInt8, alloc::AllocVar};
+use ark_ff::PrimeField;
 
 use super::*;
 
-pub struct JZVectorCommitmentParamsVar<ConstraintF: Field, P: Config, PG: ConfigGadget<P, ConstraintF>>
+pub struct JZVectorCommitmentParamsVar<ConstraintF: PrimeField, P: Config, PG: ConfigGadget<P, ConstraintF>>
 {
     pub leaf_crh_params_var: 
         <PG::LeafHash as CRHSchemeGadget<P::LeafHash, ConstraintF>>::ParametersVar,
@@ -25,7 +26,7 @@ pub struct JZVectorCommitmentParamsVar<ConstraintF: Field, P: Config, PG: Config
         <PG::TwoToOneHash as TwoToOneCRHSchemeGadget<P::TwoToOneHash, ConstraintF>>::ParametersVar,
 }
 
-impl<P: Config, ConstraintF: Field, PG: ConfigGadget<P, ConstraintF>>
+impl<P: Config, ConstraintF: PrimeField, PG: ConfigGadget<P, ConstraintF>>
     AllocVar<JZVectorCommitmentParams<P>, ConstraintF> for JZVectorCommitmentParamsVar<ConstraintF, P, PG> {
     fn new_variable<T: Borrow<JZVectorCommitmentParams<P>>>(
         cs: impl Into<Namespace<ConstraintF>>,
@@ -61,9 +62,9 @@ impl<P: Config, ConstraintF: Field, PG: ConfigGadget<P, ConstraintF>>
     }
 }
 
-pub struct JZVectorCommitmentOpeningProofVar<ConstraintF: Field, P: Config, PG: ConfigGadget<P, ConstraintF>>
+pub struct JZVectorCommitmentOpeningProofVar<ConstraintF: PrimeField, P: Config, PG: ConfigGadget<P, ConstraintF>>
     where   P: Config,
-            ConstraintF: Field,
+            ConstraintF: PrimeField,
             PG: ConfigGadget<P, ConstraintF>,
             [u8]: std::borrow::Borrow<<P as Config>::Leaf>,
             PG: ConfigGadget<P, ConstraintF, Leaf = [UInt8<ConstraintF>]>,
@@ -78,7 +79,7 @@ impl<L, ConstraintF, P, PG> AllocVar<JZVectorCommitmentOpeningProof<P, L>, Const
     JZVectorCommitmentOpeningProofVar<ConstraintF, P, PG>
     where   L: CanonicalSerialize + Clone + Sized,
             P: Config,
-            ConstraintF: Field,
+            ConstraintF: PrimeField,
             PG: ConfigGadget<P, ConstraintF>,
             [u8]: std::borrow::Borrow<<P as Config>::Leaf>,
             P: Config<Leaf = [u8]>,
@@ -129,7 +130,7 @@ impl<L, ConstraintF, P, PG> AllocVar<JZVectorCommitmentOpeningProof<P, L>, Const
 }
 
 
-pub fn generate_constraints<ConstraintF: Field, P: Config, PG: ConfigGadget<P, ConstraintF>>(
+pub fn generate_constraints<ConstraintF: PrimeField, P: Config, PG: ConfigGadget<P, ConstraintF>>(
     _cs: ConstraintSystemRef<ConstraintF>,
     params: &JZVectorCommitmentParamsVar<ConstraintF, P, PG>,
     proof: &JZVectorCommitmentOpeningProofVar<ConstraintF, P, PG>

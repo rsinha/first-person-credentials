@@ -5,7 +5,7 @@ use ark_ff::PrimeField;
 use ark_r1cs_std::prelude::*;
 use ark_std::borrow::*;
 use ark_relations::r1cs::*;
-use ark_r1cs_std::{bits::uint8::UInt8, bits::ToBytesGadget, alloc::AllocVar};
+use ark_r1cs_std::{uint8::UInt8, alloc::AllocVar};
 
 use super::*;
 
@@ -117,7 +117,7 @@ pub fn generate_constraints<
     ).unwrap();
 
     let len = prf_instance.output_var.len();
-    let crh_output_var_bytes = crh_output_var.to_bytes().unwrap();
+    let crh_output_var_bytes = crh_output_var.to_bytes_le().unwrap();
 
     for (i, byte_var) in crh_output_var_bytes[0..len].iter().enumerate() {
         byte_var.enforce_equal(&prf_instance.output_var[i]).unwrap();

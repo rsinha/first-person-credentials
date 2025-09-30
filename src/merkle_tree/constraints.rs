@@ -3,12 +3,12 @@
 
 use crate::merkle_tree::{Path, Config, IdentityDigestConverter};
 use ark_crypto_primitives::crh::{CRHSchemeGadget, TwoToOneCRHSchemeGadget};
-use ark_ff::Field;
+use ark_ff::PrimeField;
 use ark_r1cs_std::alloc::AllocVar;
 use ark_r1cs_std::boolean::Boolean;
 #[allow(unused)]
 use ark_r1cs_std::prelude::*;
-use ark_r1cs_std::ToBytesGadget;
+use ark_r1cs_std::prelude::ToBytesGadget;
 use ark_relations::r1cs::{Namespace, SynthesisError};
 use ark_std::borrow::Borrow;
 use ark_std::fmt::Debug;
@@ -27,22 +27,22 @@ impl<T> DigestVarConverter<T, T> for IdentityDigestConverter<T> {
     }
 }
 
-pub struct BytesVarDigestConverter<T: ToBytesGadget<ConstraintF>, ConstraintF: Field> {
+pub struct BytesVarDigestConverter<T: ToBytesGadget<ConstraintF>, ConstraintF: PrimeField> {
     _prev_layer_digest: T,
     _constraint_field: ConstraintF,
 }
 
-impl<T: ToBytesGadget<ConstraintF>, ConstraintF: Field> DigestVarConverter<T, [UInt8<ConstraintF>]>
+impl<T: ToBytesGadget<ConstraintF>, ConstraintF: PrimeField> DigestVarConverter<T, [UInt8<ConstraintF>]>
     for BytesVarDigestConverter<T, ConstraintF>
 {
     type TargetType = Vec<UInt8<ConstraintF>>;
 
     fn convert(from: T) -> Result<Self::TargetType, SynthesisError> {
-        from.to_non_unique_bytes()
+        from.to_non_unique_bytes_le()
     }
 }
 
-pub trait ConfigGadget<P: Config, ConstraintF: Field> {
+pub trait ConfigGadget<P: Config, ConstraintF: PrimeField> {
     type Leaf: Debug + ?Sized;
     type LeafDigest: AllocVar<P::LeafDigest, ConstraintF>
         + EqGadget<ConstraintF>
@@ -91,8 +91,8 @@ type TwoToOneParam<PG, P, ConstraintF> =
 
 /// Represents a merkle tree path gadget.
 #[derive(Debug, Derivative)]
-#[derivative(Clone(bound = "P: Config, ConstraintF: Field, PG: ConfigGadget<P, ConstraintF>"))]
-pub struct PathVar<P: Config, ConstraintF: Field, PG: ConfigGadget<P, ConstraintF>> {
+#[derivative(Clone(bound = "P: Config, ConstraintF: PrimeField, PG: ConfigGadget<P, ConstraintF>"))]
+pub struct PathVar<P: Config, ConstraintF: PrimeField, PG: ConfigGadget<P, ConstraintF>> {
     /// `path[i]` is 0 (false) iff ith non-leaf node from top to bottom is left.
     pub path: Vec<Boolean<ConstraintF>>,
     /// `auth_path[i]` is the entry of sibling of ith non-leaf node from top to bottom.
@@ -103,11 +103,11 @@ pub struct PathVar<P: Config, ConstraintF: Field, PG: ConfigGadget<P, Constraint
     pub leaf_is_right_child: Boolean<ConstraintF>,
 }
 
-impl<P: Config, ConstraintF: Field, PG: ConfigGadget<P, ConstraintF>> AllocVar<Path<P>, ConstraintF>
+impl<P: Config, ConstraintF: PrimeField, PG: ConfigGadget<P, ConstraintF>> AllocVar<Path<P>, ConstraintF>
     for PathVar<P, ConstraintF, PG>
 where
     P: Config,
-    ConstraintF: Field,
+    ConstraintF: PrimeField,
 {
     #[tracing::instrument(target = "r1cs", skip(cs, f))]
     fn new_variable<T: Borrow<Path<P>>>(
@@ -150,7 +150,7 @@ where
     }
 }
 
-impl<P: Config, ConstraintF: Field, PG: ConfigGadget<P, ConstraintF>> PathVar<P, ConstraintF, PG> {
+impl<P: Config, ConstraintF: PrimeField, PG: ConfigGadget<P, ConstraintF>> PathVar<P, ConstraintF, PG> {
     /// Set the leaf index of the path to a given value. Verifier can use function before calling `verify`
     /// to check the correctness leaf position.
     /// * `leaf_index`: leaf index encoded in little-endian format

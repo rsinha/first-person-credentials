@@ -9,9 +9,9 @@ use ark_relations::r1cs::*;
 use ark_groth16::{Groth16, ProvingKey, VerifyingKey};
 use ark_snark::SNARK;
 
-use lib_sanctum::{record_commitment, prf};
-use lib_sanctum::record_commitment::pedersen::{*, constraints::*};
-use lib_sanctum::prf::{*, constraints::*};
+use zkbk::{record_commitment, prf};
+use zkbk::record_commitment::pedersen::{*, constraints::*};
+use zkbk::prf::{*, constraints::*};
 
 pub type ConstraintF = ark_bw6_761::Fr;
 pub type H = prf::config::ed_on_bw6_761::Hash;
@@ -105,7 +105,7 @@ impl ConstraintSynthesizer<ConstraintF> for IssuerCircuit {
         // just compare the x-coordinate...that's what compressed mode stores anyways
         // see ark_ec::models::short_weierstrass::GroupAffine::to_bytes
         let mut pubkey_byte_vars: Vec::<UInt8<ConstraintF>> = Vec::new();
-        pubkey_byte_vars.extend_from_slice(&user_secret_key_com_affine.x.to_bytes()?);
+        pubkey_byte_vars.extend_from_slice(&user_secret_key_com_affine.x.to_bytes_le()?);
 
         // prove ownership of the coin. Does sk correspond to coin's pk?
         for (i, byte_var) in pubkey_byte_vars.iter().enumerate() {

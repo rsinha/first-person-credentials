@@ -3,7 +3,7 @@
 
 use ark_ec::CurveGroup;
 use ark_ff::Field;
-use ark_r1cs_std::{bits::uint8::UInt8, prelude::*};
+use ark_r1cs_std::{uint8::UInt8, prelude::*};
 use ark_relations::r1cs::ConstraintSystemRef;
 use ark_relations::r1cs::{Namespace, SynthesisError};
 use ark_std::vec::Vec;
@@ -89,8 +89,8 @@ where
         if parameters.salt.is_some() {
             hash_input.extend_from_slice(parameters.salt.as_ref().unwrap());
         }
-        hash_input.extend_from_slice(&public_key.pub_key.to_bytes()?);
-        hash_input.extend_from_slice(&claimed_prover_commitment.to_bytes()?);
+        hash_input.extend_from_slice(&public_key.pub_key.to_bytes_le()?);
+        hash_input.extend_from_slice(&claimed_prover_commitment.to_bytes_le()?);
         hash_input.extend_from_slice(message);
 
         let b2s_params = <B2SParamsVar as AllocVar<_, ConstraintF<C>>>::new_constant(
@@ -240,7 +240,7 @@ where
     GC: CurveVar<C, ConstraintF<C>>,
     for<'a> &'a GC: GroupOpsBounds<'a, C, GC>,
 {
-    fn to_bytes(&self) -> Result<Vec<UInt8<ConstraintF<C>>>, SynthesisError> {
-        self.pub_key.to_bytes()
+    fn to_bytes_le(&self) -> Result<Vec<UInt8<ConstraintF<C>>>, SynthesisError> {
+        self.pub_key.to_bytes_le()
     }
 }

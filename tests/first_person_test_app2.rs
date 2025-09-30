@@ -9,11 +9,11 @@ use ark_groth16::{Groth16, ProvingKey, VerifyingKey};
 use ark_snark::SNARK;
 use ark_ec::CurveGroup;
 
-use lib_sanctum::{record_commitment, prf};
-use lib_sanctum::record_commitment::pedersen::{*, constraints::*};
-use lib_sanctum::prf::{*, constraints::*};
-use lib_sanctum::utils;
-use lib_sanctum::signature::{schnorr, schnorr::constraints::*, *};
+use zkbk::{record_commitment, prf};
+use zkbk::record_commitment::pedersen::{*, constraints::*};
+use zkbk::prf::{*, constraints::*};
+use zkbk::utils;
+use zkbk::signature::{schnorr, schnorr::constraints::*, *};
 
 use ark_ed_on_bw6_761::constraints::EdwardsVar as JubJubVar;
 use ark_ed_on_bw6_761::EdwardsProjective as JubJub;

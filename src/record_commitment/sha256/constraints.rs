@@ -4,7 +4,7 @@ use ark_crypto_primitives::crh::CRHSchemeGadget;
 use ark_ff::*;
 use ark_relations::r1cs::*;
 use ark_r1cs_std::alloc::AllocVar;
-use ark_r1cs_std::{bits::uint8::UInt8, prelude::*};
+use ark_r1cs_std::{uint8::UInt8, prelude::*};
 use ark_std::{borrow::*, *};
 use ark_crypto_primitives::crh::sha256::{*, constraints::*};
 

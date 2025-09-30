@@ -3,9 +3,7 @@ use ark_std::*;
 use ark_ff::{
     PrimeField,
     BigInt,
-    field_hashers::{DefaultFieldHasher, HashToField},
 };
-use ark_crypto_primitives::crh::sha256::Sha256;
 use ark_poly::{
     Polynomial,
     univariate::DensePolynomial, 
@@ -92,16 +90,6 @@ pub fn poly_eval_mult_const<F: FftField + PrimeField>(
         new_poly.coeffs[i] = new_poly.coeffs[i] * c.clone();
     }
     new_poly
-}
-
-pub fn fs_hash<F: FftField + PrimeField>(
-    x: &[Vec<u8>], 
-    num_output: usize
-) -> Vec<F> {
-    let hasher = <DefaultFieldHasher<Sha256> as HashToField<F>>::new(b"jigzexe");
-    let field_elements = hasher.hash_to_field(&x.concat(), num_output);
-
-    field_elements
 }
 
 // returns t(X) = c
